@@ -62,7 +62,7 @@ jobs:
     # Build, tag, and push Backend image to Amazon ECR
     - name: Build, tag, and push Backend image to Amazon ECR
       run: |
-        sudo docker build -t my-springboot-image .
+        sudo docker build -t my-springboot-image ./ProductManagementBackEndApp/Dockerfile
         sudo docker tag my-springboot-image ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/product-management-backend-app:latest
         sudo docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/product-management-backend-app:latest
 
@@ -70,7 +70,7 @@ jobs:
     # Build, tag, and push Frontend image to Amazon ECR
     - name: Build, tag, and push Frontend image to Amazon ECR
       run: |
-        sudo docker build -t react-image .
+        sudo docker build -t react-image ./product-management-frontend-app/Dockerfile
         sudo docker tag react-image ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/product-management-frontend-app:latest
         sudo docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/product-management-frontend-app:latest
 
