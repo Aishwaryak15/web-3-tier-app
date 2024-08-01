@@ -45,7 +45,7 @@ jobs:
 
     # Build java project
     - name: Build Java Backend
-        run: |
+      run: |
           cd ProductManagementBackEndApp
           mvn clean package
 
