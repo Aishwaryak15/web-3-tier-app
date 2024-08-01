@@ -62,17 +62,16 @@ jobs:
     # Build, tag, and push Backend image to Amazon ECR
     - name: Build, tag, and push Backend image to Amazon ECR
       run: |
-        sudo docker build tag my-springboot-image web-3-tier-app/ProductManagementBackEndApp/Dockerfile
-        sudo docker tag my-springboot-image ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/product-management-backend-app:latest
-        sudo docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/product-management-backend-app:latest
-
+        docker build -t product-management-backend-app .
+        docker tag product-management-backend-app:latest 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-backend-app:latest
+        docker push 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-backend-app:latest
 
     # Build, tag, and push Frontend image to Amazon ECR
     - name: Build, tag, and push Frontend image to Amazon ECR
       run: |
-        sudo docker build tag react-image web-3-tier-app/product-management-frontend-app/Dockerfile
-        sudo docker tag react-image ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/product-management-frontend-app:latest
-        sudo docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/product-management-frontend-app:latest
+        docker build -t product-management-frontend-app .
+        docker tag product-management-frontend-app:latest 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-frontend-app:latest
+        docker push 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-frontend-app:latest
 
     
 
