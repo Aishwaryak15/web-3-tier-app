@@ -55,7 +55,7 @@ jobs:
     - name: Build React Frontend
       run: |
           pwd
-          ll
+          ls
           cd product-management-frontend-app
           npm install
           npm run build
