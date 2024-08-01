@@ -67,9 +67,9 @@ jobs:
         ECR_REPOSITORY: product-management-backend-app
         IMAGE_TAG: backend
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./ProductManagementBackEndApp/Dockerfile
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
+      
 
     # Build, tag, and push Frontend image to Amazon ECR
     - name: Build, tag, and push Frontend image to Amazon ECR
@@ -78,7 +78,7 @@ jobs:
         ECR_REPOSITORY: product-management-frontend-app
         IMAGE_TAG: frontend
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./product-management-frontend-app/Dockerfile
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
     
 
