@@ -33,7 +33,6 @@ jobs:
  
     # Authenticate AWS with Docker to interact with an Amazon ECR registry
     - name: Login to Amazon ECR
-      id: login-ecr
       run: aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
 
@@ -63,7 +62,7 @@ jobs:
     # Build, tag, and push Backend image to Amazon ECR
     - name: Build, tag, and push Backend image to Amazon ECR
       env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        #ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: product-management-backend-app
         IMAGE_TAG: backend
       run: |
@@ -74,7 +73,7 @@ jobs:
     # Build, tag, and push Frontend image to Amazon ECR
     - name: Build, tag, and push Frontend image to Amazon ECR
       env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        #ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: product-management-frontend-app
         IMAGE_TAG: frontend
       run: |
