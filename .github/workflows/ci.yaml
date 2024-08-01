@@ -54,6 +54,8 @@ jobs:
     # Install React project dependencies
     - name: Build React Frontend
       run: |
+          pwd
+          ll
           cd product-management-frontend-app
           npm install
           npm run build
