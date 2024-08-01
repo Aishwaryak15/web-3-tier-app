@@ -62,6 +62,7 @@ jobs:
     # Build, tag, and push Backend image to Amazon ECR
     - name: Build, tag, and push Backend image to Amazon ECR
       run: |
+        ls
         docker build -t product-management-backend-app ./ProductManagementBackEndApp/Dockerfile
         docker tag product-management-backend-app:latest 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-backend-app:latest
         docker push 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-backend-app:latest
