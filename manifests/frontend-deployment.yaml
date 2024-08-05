@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: product-management-frontend-app:latest
+          image: 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-frontend-app:latest
           ports:
             - containerPort: 80
