@@ -16,10 +16,12 @@ spec:
         - name: mysql
           image: mysql:5.7
           env:
+          - name: MYSQL_HOST
+            value: ${{ secrets.MYSQL_HOST }}
           - name: MYSQL_ROOT_PASSWORD
             value: root
           - name: MYSQL_USERNAME
-            value: root productmanagementdb
+            value: root
           - name: MYSQL_DBNAME
             value: productmanagementdb
           ports:
