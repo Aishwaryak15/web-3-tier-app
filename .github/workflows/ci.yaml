@@ -96,9 +96,11 @@ jobs:
 
     # - name: Deploy to Kubernetes
     #   run: |
+#           cd manifests
     #       kubectl apply -f backend-deployment.yaml
     #       kubectl apply -f frontend-deployment.yaml
     #       kubectl apply -f database-deployment.yaml
+    #       kubectl get pods
 
 
 
