@@ -75,22 +75,16 @@ jobs:
         docker tag product-management-frontend-app:latest 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-frontend-app:latest
         docker push 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-frontend-app:latest
 
-    
+    # Connecting it to the cluster created on eks   
+    - name: Set up Kubeconfig
+      run: aws eks update-kubeconfig --region us-east-1 --name deploy
+      env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-    # Building docker image     
-    #  - name: Build Docker Images
-    #     run: |
-    #       docker build -t ${{ secrets.ECR_REGISTRY }}/ProductManagementBackEndApp:latest ./backend
-    #       docker build -t ${{ secrets.ECR_REGISTRY }}/product-management-frontend-app:latest ./frontend
-
-
-   
-  
-    # # Push Docker image to Amazon ECR
-    # - name: Push Docker Images to ECR
-    #     run: |
-    #       docker push ${{ secrets.ECR_REGISTRY }}/produc-tmanagement-backend-app:latest
-    #       docker push ${{ secrets.ECR_REGISTRY }}/product-management-frontend-app:latest
+    # Deploying to EKS
+    - name: Deploy to EKS
+      run: kubectl apply -f manifests/
 
 
     # Deploy
@@ -98,11 +92,6 @@ jobs:
     #     uses: azure/setup-kubectl@v2
     #     with:
     #       version: '1.21.0'
-
-
-    # - name: Get EKS credentials
-    #   run: |
-    #       aws eks update-kubeconfig --name demo --region ${{ secrets.AWS_REGION }}
 
 
     # - name: Deploy to Kubernetes
