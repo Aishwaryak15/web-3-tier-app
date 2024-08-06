@@ -69,7 +69,7 @@ jobs:
     - name: Build, tag, and push Backend image to Amazon ECR
       run: |
         cd ProductManagementBackEndApp
-        docker build -t product-management-backend-app .
+        docker build -t product-management-backend-app:${{ steps.shortSha.outputs.short_sha }} .
         docker tag product-management-backend-app:${{ steps.shortSha.outputs.short_sha }} 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-backend-app:${{ steps.shortSha.outputs.short_sha }}
         docker push 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-backend-app:${{ steps.shortSha.outputs.short_sha }}
 
