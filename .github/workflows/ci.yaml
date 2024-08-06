@@ -11,7 +11,7 @@ on:
 # Defining the jobs in the workflow
 jobs:
   build:
-    runs-on: ubuntu-${{ steps.shortSha.outputs.short_sha }}
+    runs-on: ubuntu-latest
     env:
       MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
       MYSQL_DB_NAME: ${{ secrets.MYSQL_DB_NAME }}
