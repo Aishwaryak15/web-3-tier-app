@@ -77,7 +77,7 @@ jobs:
     - name: Build, tag, and push Frontend image to Amazon ECR
       run: |
         cd product-management-frontend-app
-        docker build -t product-management-frontend-app .
+        docker build -t product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }} .
         docker tag product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }} 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }}
         docker push 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }}
  
