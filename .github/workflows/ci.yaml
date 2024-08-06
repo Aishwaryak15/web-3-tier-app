@@ -11,17 +11,23 @@ on:
 # Defining the jobs in the workflow
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-${{ steps.shortSha.outputs.short_sha }}
     env:
       MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
       MYSQL_DB_NAME: ${{ secrets.MYSQL_DB_NAME }}
       MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
       MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+    outputs:
+      shortSha: ${{ steps.shortSha.outputs.short_sha }}
 
     # Define the steps to be executed in the job
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+
+    - name: Short sha
+      id: shortSha
+      run: echo short_sha=$(git rev-parse --short ${{ github.sha }}) >> $GITHUB_OUTPUT
     
     # configure AWS / Set up AWS CLI
     - name: Configure AWS credentials
@@ -64,16 +70,21 @@ jobs:
       run: |
         cd ProductManagementBackEndApp
         docker build -t product-management-backend-app .
-        docker tag product-management-backend-app:latest 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-backend-app:latest
-        docker push 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-backend-app:latest
+        docker tag product-management-backend-app:${{ steps.shortSha.outputs.short_sha }} 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-backend-app:${{ steps.shortSha.outputs.short_sha }}
+        docker push 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-backend-app:${{ steps.shortSha.outputs.short_sha }}
 
     # Build, tag, and push Frontend image to Amazon ECR
     - name: Build, tag, and push Frontend image to Amazon ECR
       run: |
         cd product-management-frontend-app
         docker build -t product-management-frontend-app .
-        docker tag product-management-frontend-app:latest 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-frontend-app:latest
-        docker push 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-frontend-app:latest
+        docker tag product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }} 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }}
+        docker push 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }}
+ 
+    - name: update tags
+      run: |
+        yq eval '.spec.template.spec.containers[0].image = "920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-backend-app:${{ steps.shortSha.outputs.short_sha }}"' -i manifests/backend-deployment.yaml
+        yq eval '.spec.template.spec.containers[0].image = "920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }}"' -i manifests/frontend-deployment.yaml
 
     # Connecting it to the cluster created on eks   
     - name: Set up Kubeconfig

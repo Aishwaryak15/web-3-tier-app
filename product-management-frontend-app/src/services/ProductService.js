@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_API = "http://localhost:9000/api/products" ;
+const BASE_API = "http://backend-service.default.svc.cluster.local:9000/api/products" ;
 
 class ProductService{
 
