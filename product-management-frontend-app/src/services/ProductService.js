@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_API = "http://backend-service.default.svc.cluster.local:9000/api/products" ;
+const BASE_API = "http://44.203.132.151:9000/api/products" ;
 
 class ProductService{
 
