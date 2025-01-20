@@ -78,13 +78,13 @@ jobs:
       run: |
         cd product-management-frontend-app
         docker build -t product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }} .
-        docker tag product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }} 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }}
-        docker push 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }}
+        docker tag product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }} 937184064551.dkr.ecr.us-east-1.amazonaws.com/product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }}
+        docker push 937184064551.dkr.ecr.us-east-1.amazonaws.com/product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }}
  
     - name: update tags
       run: |
-        yq eval '.spec.template.spec.containers[0].image = "920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-backend-app:${{ steps.shortSha.outputs.short_sha }}"' -i manifests/backend-deployment.yaml
-        yq eval '.spec.template.spec.containers[0].image = "920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }}"' -i manifests/frontend-deployment.yaml
+        yq eval '.spec.template.spec.containers[0].image = "937184064551.dkr.ecr.us-east-1.amazonaws.com/product-management-backend-app:${{ steps.shortSha.outputs.short_sha }}"' -i manifests/backend-deployment.yaml
+        yq eval '.spec.template.spec.containers[0].image = "937184064551.dkr.ecr.us-east-1.amazonaws.com/product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }}"' -i manifests/frontend-deployment.yaml
 
     # Connecting it to the cluster created on eks   
     - name: Set up Kubeconfig
@@ -98,20 +98,20 @@ jobs:
       run: kubectl apply -f manifests/
 
 
-    # Deploy
-    # - name: Set up kubectl
-    #     uses: azure/setup-kubectl@v2
-    #     with:
-    #       version: '1.21.0'
+    Deploy
+    - name: Set up kubectl
+        uses: azure/setup-kubectl@v2
+        with:
+          version: '1.21.0'
 
 
-    # - name: Deploy to Kubernetes
-    #   run: |
-    #       cd manifests
-    #       kubectl apply -f backend-deployment.yaml
-    #       kubectl apply -f frontend-deployment.yaml
-    #       kubectl apply -f database-deployment.yaml
-    #       kubectl get pods
+    - name: Deploy to Kubernetes
+      run: |
+          cd manifests
+          kubectl apply -f backend-deployment.yaml
+          kubectl apply -f frontend-deployment.yaml
+          kubectl apply -f database-deployment.yaml
+          kubectl get pods
 
 
 
