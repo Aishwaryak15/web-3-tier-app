@@ -19,11 +19,11 @@ spec:
           - name: MYSQL_HOST
             value: ${{ secrets.MYSQL_HOST }}
           - name: MYSQL_ROOT_PASSWORD
-            value: root
+            value: root1234
           - name: MYSQL_USERNAME
             value: root
           - name: MYSQL_DBNAME
-            value: productmanagementdb
+            value: db
           ports:
             - containerPort: 3306
           volumeMounts:
