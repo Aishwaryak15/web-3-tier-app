@@ -1,12 +1,10 @@
 # Define the CI/CD Workflow for React code
-name: CI workflow for 3 tier application
+name: CI workflow for 3-tier application
 
 # Trigger the workflow on pushes to the specified branch
 on:
   push:
     branches: [ main ]
-      
-          
 
 # Defining the jobs in the workflow
 jobs:
@@ -29,7 +27,7 @@ jobs:
       id: shortSha
       run: echo short_sha=$(git rev-parse --short ${{ github.sha }}) >> $GITHUB_OUTPUT
     
-    # configure AWS / Set up AWS CLI
+    # Configure AWS credentials
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -41,7 +39,6 @@ jobs:
     - name: Login to Amazon ECR
       run: aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
-
     # Setup Java environment
     - name: Set up JDK
       uses: actions/setup-java@v3
@@ -49,71 +46,60 @@ jobs:
          java-version: '17'
          distribution: 'temurin'  # Choose the JDK distribution
 
-
-    # Build java project
+    # Build Java Backend project
     - name: Build Java Backend
       run: |
-          cd ProductManagementBackEndApp
-          mvn clean package
+        cd ProductManagementBackEndApp
+        mvn clean package
 
     # Install React project dependencies
     - name: Build React Frontend
       run: |
-          pwd
-          ls
-          cd product-management-frontend-app
-          sudo npm install
-          sudo npm run build
+        pwd
+        ls
+        cd product-management-frontend-app
+        sudo npm install
+        sudo npm run build
 
     # Build, tag, and push Backend image to Amazon ECR
     - name: Build, tag, and push Backend image to Amazon ECR
       run: |
         cd ProductManagementBackEndApp
         docker build -t product-management-backend-app:${{ steps.shortSha.outputs.short_sha }} .
-        docker tag product-management-backend-app:${{ steps.shortSha.outputs.short_sha }} 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-backend-app:${{ steps.shortSha.outputs.short_sha }}
-        docker push 920726643262.dkr.ecr.us-east-1.amazonaws.com/product-management-backend-app:${{ steps.shortSha.outputs.short_sha }}
+        docker tag product-management-backend-app:${{ steps.shortSha.outputs.short_sha }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/product-management-backend-app:${{ steps.shortSha.outputs.short_sha }}
+        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/product-management-backend-app:${{ steps.shortSha.outputs.short_sha }}
 
     # Build, tag, and push Frontend image to Amazon ECR
     - name: Build, tag, and push Frontend image to Amazon ECR
       run: |
         cd product-management-frontend-app
         docker build -t product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }} .
-        docker tag product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }} 937184064551.dkr.ecr.us-east-1.amazonaws.com/product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }}
-        docker push 937184064551.dkr.ecr.us-east-1.amazonaws.com/product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }}
- 
-    - name: update tags
+        docker tag product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }}
+        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }}
+
+    # Update deployment tags in manifests
+    - name: Update tags
       run: |
-        yq eval '.spec.template.spec.containers[0].image = "937184064551.dkr.ecr.us-east-1.amazonaws.com/product-management-backend-app:${{ steps.shortSha.outputs.short_sha }}"' -i manifests/backend-deployment.yaml
-        yq eval '.spec.template.spec.containers[0].image = "937184064551.dkr.ecr.us-east-1.amazonaws.com/product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }}"' -i manifests/frontend-deployment.yaml
+        yq eval '.spec.template.spec.containers[0].image = "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/product-management-backend-app:${{ steps.shortSha.outputs.short_sha }}"' -i manifests/backend-deployment.yaml
+        yq eval '.spec.template.spec.containers[0].image = "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/product-management-frontend-app:${{ steps.shortSha.outputs.short_sha }}"' -i manifests/frontend-deployment.yaml
 
-    # Connecting it to the cluster created on eks   
+    # Set up Kubeconfig
     - name: Set up Kubeconfig
-      run: aws eks update-kubeconfig --region us-east-1 --name deploy
+      run: aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name deploy
       env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-    # Deploying to EKS
-    - name: Deploy to EKS
-      run: kubectl apply -f manifests/
-
-
-    Deploy
+    # Deploy to Kubernetes (EKS)
     - name: Set up kubectl
-        uses: azure/setup-kubectl@v2
-        with:
-          version: '1.21.0'
-
+      uses: azure/setup-kubectl@v2
+      with:
+        version: '1.21.0'
 
     - name: Deploy to Kubernetes
       run: |
-          cd manifests
-          kubectl apply -f backend-deployment.yaml
-          kubectl apply -f frontend-deployment.yaml
-          kubectl apply -f database-deployment.yaml
-          kubectl get pods
-
-
-
-
-      
+        cd manifests
+        kubectl apply -f backend-deployment.yaml
+        kubectl apply -f frontend-deployment.yaml
+        kubectl apply -f database-deployment.yaml
+        kubectl get pods
