@@ -87,9 +87,9 @@ jobs:
     - name: Set up Kubeconfig
       run: aws eks update-kubeconfig --region us-east-1 --name cluster
       env:
-        AWS_ACCESS_KEY_ID: AKIA5UNEF6QT3TJBFBG7
-        AWS_SECRET_ACCESS_KEY: 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
-
+        AWS_ACCESS_KEY_ID: 
+        AWS_SECRET_ACCESS_KEY: 
+        
     # Deploy to Kubernetes (EKS)
     - name: Set up kubectl
       uses: azure/setup-kubectl@v3
