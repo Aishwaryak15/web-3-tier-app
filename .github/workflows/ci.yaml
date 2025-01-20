@@ -85,7 +85,7 @@ jobs:
 
     # Set up Kubeconfig
     - name: Set up Kubeconfig
-      run: aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name deploy
+      run: aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name cluster
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
