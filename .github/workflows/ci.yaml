@@ -92,7 +92,7 @@ jobs:
 
     # Deploy to Kubernetes (EKS)
     - name: Set up kubectl
-      uses: azure/setup-kubectl@v2
+      uses: azure/setup-kubectl@v3
       with:
         version: '1.21.0'
 
